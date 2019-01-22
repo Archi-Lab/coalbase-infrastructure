@@ -11,7 +11,7 @@ networks:
 
 services:
   prometheus:
-    image: prometheus-test
+    image: docker.nexus.archi-lab.io/archilab/prometheus-custom:${BUILD_ID}
     volumes:
       - prometheus_data:/prometheus
     command:
@@ -58,7 +58,7 @@ services:
       mode: global
 
   grafana:
-    image: grafana-test
+    image: docker.nexus.archi-lab.io/archilab/grafana-custom:${BUILD_ID}
     depends_on:
       - prometheus
     ports:
