@@ -66,11 +66,11 @@ services:
       # Syslog TCP
       # - 514:514
       # Syslog UDP
-      # - 514:514/udp
+      - 514:514/udp
       # GELF TCP
-      # - 12201:12201
+      - 12201:12201
       # GELF UDP
-      # - 12201:12201/udp
+      - 12201:12201/udp
     networks:
       - coalbase_backend
       - logging_internal
