@@ -1,0 +1,93 @@
+version: '3.4'
+
+volumes:
+  prometheus_data: {}
+  grafana_data: {}
+
+networks:
+  monitoring:
+  coalbase_backend:
+    external: true
+
+services:
+  prometheus:
+    image: prometheus-test
+    volumes:
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    #ports:
+    #  - 9090:9090
+    depends_on:
+      - cadvisor
+    networks:
+      - coalbase_backend
+      - monitoring
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+
+  node-exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    #ports:
+    #  - 9100:9100
+    networks:
+      - coalbase_backend
+    deploy:
+      mode: global
+
+  #alertmanager:
+  #  image: alertmanager-test
+  #  ports:
+  #    - 9093:9093
+  #  networks:
+  #    - monitoring
+  #  command:
+  #    - '--config.file=/etc/alertmanager/config.yml'
+  #    - '--storage.path=/alertmanager'
+  #  deploy:
+  #    placement:
+  #      constraints:
+  #         - node.role==manager
+
+  cadvisor:
+    image: google/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - coalbase_backend
+    deploy:
+      mode: global
+
+  grafana:
+    image: grafana-test
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - monitoring
+
+
