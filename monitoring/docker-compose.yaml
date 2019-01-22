@@ -19,8 +19,6 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
-    #ports:
-    #  - 9090:9090
     depends_on:
       - cadvisor
     networks:
@@ -42,26 +40,10 @@ services:
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    #ports:
-    #  - 9100:9100
     networks:
       - coalbase_backend
     deploy:
       mode: global
-
-  #alertmanager:
-  #  image: alertmanager-test
-  #  ports:
-  #    - 9093:9093
-  #  networks:
-  #    - monitoring
-  #  command:
-  #    - '--config.file=/etc/alertmanager/config.yml'
-  #    - '--storage.path=/alertmanager'
-  #  deploy:
-  #    placement:
-  #      constraints:
-  #         - node.role==manager
 
   cadvisor:
     image: google/cadvisor
@@ -84,8 +66,6 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
     networks:
       - monitoring
