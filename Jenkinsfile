@@ -13,7 +13,7 @@ pipeline {
                             sh "docker push docker.nexus.archi-lab.io/archilab/grafana-custom"
                         }
                     }
-                    sh "docker build -t docker.nexus.archi-lab.io/archilab/prometheus-custom -f monitoring/dockerfile.grafana.yaml ."
+                    sh "docker build -t docker.nexus.archi-lab.io/archilab/prometheus-custom -f monitoring/dockerfile.prometheus.yaml ."
                     sh "docker tag docker.nexus.archi-lab.io/archilab/prometheus-custom docker.nexus.archi-lab.io/archilab/prometheus-custom:${env.BUILD_ID}"
                     script {
                           docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
