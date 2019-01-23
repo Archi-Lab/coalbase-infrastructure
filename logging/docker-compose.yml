@@ -12,6 +12,8 @@ volumes:
     driver: local
   graylog_journal:
     driver: local
+  graylog_plugins:
+    driver: local
 
 services:
   # MongoDB: https://hub.docker.com/_/mongo/
@@ -62,7 +64,6 @@ services:
     environment:
       # CHANGE ME!
       - GRAYLOG_PASSWORD_SECRET=_coalbase_GrayLog
-      # Password: admin
       - GRAYLOG_ROOT_PASSWORD_SHA2=30E7096E54F1C6D035F54B6D4F90B88D0E32A4AEA6AFCBE33FF8DE6988B745DD
       - GRAYLOG_WEB_ENDPOINT_URI=https://log.coalbase.io/api
       - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog
@@ -85,3 +86,4 @@ services:
       - logging_internal
     volumes:
       - graylog_journal:/usr/share/graylog/data/journal
+      - graylog_plugins:/usr/share/graylog/plugin
