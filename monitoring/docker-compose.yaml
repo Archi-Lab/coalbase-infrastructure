@@ -28,6 +28,10 @@ services:
       placement:
         constraints:
           - node.role==manager
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
 
   node-exporter:
     image: prom/node-exporter
@@ -44,6 +48,10 @@ services:
       - coalbase_backend
     deploy:
       mode: global
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
 
   cadvisor:
     image: google/cadvisor
@@ -56,6 +64,10 @@ services:
       - coalbase_backend
     deploy:
       mode: global
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
 
   grafana:
     image: docker.nexus.archi-lab.io/archilab/grafana-custom:${BUILD_ID}
@@ -69,5 +81,7 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     networks:
       - monitoring
-
-
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://127.0.0.1:12201"
