@@ -60,13 +60,13 @@ services:
         gelf-address: "udp://127.0.0.1:12201"
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
-    image: graylog/graylog:2.5
+    image: graylog/graylog:3.0
     environment:
-      # CHANGE ME!
       - GRAYLOG_PASSWORD_SECRET=_coalbase_GrayLog
       - GRAYLOG_ROOT_PASSWORD_SHA2=30E7096E54F1C6D035F54B6D4F90B88D0E32A4AEA6AFCBE33FF8DE6988B745DD
       - GRAYLOG_WEB_ENDPOINT_URI=https://log.coalbase.io/api
       - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog
+      - GRAYLOG_TIMEZONE=Europe/Berlin
     depends_on:
       - mongodb
       - elasticsearch
