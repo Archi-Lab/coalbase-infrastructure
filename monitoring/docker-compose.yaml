@@ -26,10 +26,10 @@ services:
       - monitoring
     deploy:
       restart_policy:
-      condition: any
-      delay: 5s
-      max_attempts: 3
-      window: 120s
+          condition: any
+          delay: 5s
+          max_attempts: 3
+          window: 120s
       placement:
         constraints:
           - node.role==manager
@@ -53,10 +53,10 @@ services:
       - coalbase_backend
     deploy:
       restart_policy:
-      condition: any
-      delay: 5s
-      max_attempts: 3
-      window: 120s
+          condition: any
+          delay: 5s
+          max_attempts: 3
+          window: 120s
       mode: global
     logging:
       driver: gelf
@@ -74,11 +74,11 @@ services:
       - coalbase_backend
     deploy:
       restart_policy:
-      condition: any
-      delay: 5s
-      max_attempts: 3
-      window: 120s
-      mode: global
+          condition: any
+          delay: 5s
+          max_attempts: 3
+          window: 120s
+          mode: global
     logging:
       driver: gelf
       options:
@@ -88,10 +88,10 @@ services:
     image: docker.nexus.archi-lab.io/archilab/grafana-custom:${BUILD_ID}
     deploy:
       restart_policy:
-      condition: any
-      delay: 5s
-      max_attempts: 3
-      window: 120s
+          condition: any
+          delay: 5s
+          max_attempts: 3
+          window: 120s
     depends_on:
       - prometheus
     ports:
