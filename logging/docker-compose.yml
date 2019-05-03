@@ -48,10 +48,10 @@ services:
         hard: -1
     deploy:
       restart_policy:
-      condition: any
-      delay: 5s
-      max_attempts: 3
-      window: 120s
+          condition: any
+          delay: 5s
+          max_attempts: 3
+          window: 120s
       resources:
         limits:
           memory: 1G
@@ -68,10 +68,10 @@ services:
     image: graylog/graylog:3.0
     deploy:
       restart_policy:
-      condition: any
-      delay: 5s
-      max_attempts: 3
-      window: 120s
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     environment:
       - GRAYLOG_PASSWORD_SECRET=_coalbase_GrayLog
       - GRAYLOG_ROOT_PASSWORD_SHA2=30E7096E54F1C6D035F54B6D4F90B88D0E32A4AEA6AFCBE33FF8DE6988B745DD
