@@ -47,6 +47,11 @@ services:
         soft: -1
         hard: -1
     deploy:
+      restart_policy:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
       resources:
         limits:
           memory: 1G
@@ -61,6 +66,12 @@ services:
   # Graylog: https://hub.docker.com/r/graylog/graylog/
   graylog:
     image: graylog/graylog:2.5
+    deploy:
+      restart_policy:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
     environment:
       # CHANGE ME!
       - GRAYLOG_PASSWORD_SECRET=_coalbase_GrayLog
