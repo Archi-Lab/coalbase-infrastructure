@@ -75,7 +75,7 @@ services:
     environment:
       - GRAYLOG_PASSWORD_SECRET=_coalbase_GrayLog
       - GRAYLOG_ROOT_PASSWORD_SHA2=30E7096E54F1C6D035F54B6D4F90B88D0E32A4AEA6AFCBE33FF8DE6988B745DD
-      - GRAYLOG_HTTP_EXTERNAL_URI=https://log.coalbase.io/
+      - GRAYLOG_HTTP_EXTERNAL_URI=https://logging.archi-lab.io/
       - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog
       - GRAYLOG_TIMEZONE=Europe/Berlin
     depends_on:
