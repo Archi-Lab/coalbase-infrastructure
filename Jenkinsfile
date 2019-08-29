@@ -6,7 +6,7 @@ node {
     stage('Build Grafana') {
         sh "docker build -t docker.nexus.archi-lab.io/archilab/grafana-custom -f monitoring/dockerfile.grafana.yaml ."
         sh "docker tag docker.nexus.archi-lab.io/archilab/grafana-custom docker.nexus.archi-lab.io/archilab/grafana-custom:${env.BUILD_ID}"
-        docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
+        docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins') {
             sh "docker push docker.nexus.archi-lab.io/archilab/grafana-custom"
             sh "docker push docker.nexus.archi-lab.io/archilab/grafana-custom:${env.BUILD_ID}"
         }
