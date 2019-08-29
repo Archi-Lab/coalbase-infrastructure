@@ -1,4 +1,8 @@
 node {
+    stage('Checkout') {
+        checkout scm
+    }
+
     stage('Build Grafana') {
         sh "docker build -t docker.nexus.archi-lab.io/archilab/grafana-custom -f monitoring/dockerfile.grafana.yaml ."
         sh "docker tag docker.nexus.archi-lab.io/archilab/grafana-custom docker.nexus.archi-lab.io/archilab/grafana-custom:${env.BUILD_ID}"
