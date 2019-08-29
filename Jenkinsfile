@@ -1,57 +1,31 @@
-pipeline {
-
-    agent any
-
-    stages{
-        stage('Build') {
-                steps {
-                    updateGitlabCommitStatus name: "Building", state: "running"
-                    sh "docker build -t docker.nexus.archi-lab.io/archilab/grafana-custom -f monitoring/dockerfile.grafana.yaml ."
-                    sh "docker tag docker.nexus.archi-lab.io/archilab/grafana-custom docker.nexus.archi-lab.io/archilab/grafana-custom:${env.BUILD_ID}"
-                    script {
-                        docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
-                            sh "docker push docker.nexus.archi-lab.io/archilab/grafana-custom"
-                        }
-                    }
-                    sh "docker build -t docker.nexus.archi-lab.io/archilab/prometheus-custom -f monitoring/dockerfile.prometheus.yaml ."
-                    sh "docker tag docker.nexus.archi-lab.io/archilab/prometheus-custom docker.nexus.archi-lab.io/archilab/prometheus-custom:${env.BUILD_ID}"
-                    script {
-                          docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
-                              sh "docker push docker.nexus.archi-lab.io/archilab/prometheus-custom"
-                          }
-                    }
-                }
-                post {
-                  success {
-                    updateGitlabCommitStatus name: "Building", state: "success"
-                  }
-                  failure {
-                    updateGitlabCommitStatus name: "Building", state: "failed"
-                  }
-                  unstable {
-                    updateGitlabCommitStatus name: "Building", state: "success"
-                  }
-                }
+node {
+    stage('Build Grafana') {
+        sh "docker build -t docker.nexus.archi-lab.io/archilab/grafana-custom -f monitoring/dockerfile.grafana.yaml ."
+        sh "docker tag docker.nexus.archi-lab.io/archilab/grafana-custom docker.nexus.archi-lab.io/archilab/grafana-custom:${env.BUILD_ID}"
+        docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
+            sh "docker push docker.nexus.archi-lab.io/archilab/grafana-custom"
+            sh "docker push docker.nexus.archi-lab.io/archilab/grafana-custom:${env.BUILD_ID}"
         }
-        stage('Startup Infrastructure'){
-            steps {
-                script {
-                    docker.withServer('tcp://10.10.10.25:2376', 'CoalbaseVM') {
-                        sh 'docker stack deploy -c logging/docker-compose.yml logging'
-                        docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
-                          withCredentials([usernamePassword(credentialsId: 'GrafanaCredentials', usernameVariable: 'GF_SECURITY_ADMIN_USER', passwordVariable: 'GF_SECURITY_ADMIN_PASSWORD')]){
-                            sh 'docker stack deploy --with-registry-auth -c monitoring/docker-compose.yaml monitoring'
-                           }
-                        }
-                    }
+    }
+
+    stage('Build Prometheus') {
+        sh "docker build -t docker.nexus.archi-lab.io/archilab/prometheus-custom -f monitoring/dockerfile.prometheus.yaml ."
+        sh "docker tag docker.nexus.archi-lab.io/archilab/prometheus-custom docker.nexus.archi-lab.io/archilab/prometheus-custom:${env.BUILD_ID}"
+        docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
+            sh "docker push docker.nexus.archi-lab.io/archilab/prometheus-custom"
+            sh "docker push docker.nexus.archi-lab.io/archilab/prometheus-custom:${env.BUILD_ID}"
+        }
+    }
+    stage('Startup Infrastructure') {
+        docker.withServer('tcp://10.10.10.51:2376', 'coalbase-prod-certs') {
+            sh 'docker stack deploy -c logging/docker-compose.yml logging'
+            docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins') {
+                withCredentials([usernamePassword(credentialsId: 'archilab-grafana-admin',
+                        usernameVariable: 'GF_SECURITY_ADMIN_USER',
+                        passwordVariable: 'GF_SECURITY_ADMIN_PASSWORD')]) {
+                    sh 'docker stack deploy --with-registry-auth -c monitoring/docker-compose.yaml monitoring'
                 }
             }
         }
     }
-   post {
-        failure {
-            discordSend description: 'Jenkins Pipeline Build', footer: 'CoalBase-Infrastructure', link: env.BUILD_URL, result: currentBuild.currentResult, title: JOB_NAME, webhookURL: 'https://discordapp.com/api/webhooks/537602034015272960/9qa_bwMs5ZVuntNCg3BmHXYSDgo9gPZjHrgxsPJG8xya3hesFpm2aiAu8VcO3yNG9r59'
-        }
-    }
-
 }
