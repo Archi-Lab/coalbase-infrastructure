@@ -15,7 +15,7 @@ node {
     stage('Build Prometheus') {
         sh "docker build -t docker.nexus.archi-lab.io/archilab/prometheus-custom -f monitoring/dockerfile.prometheus.yaml ."
         sh "docker tag docker.nexus.archi-lab.io/archilab/prometheus-custom docker.nexus.archi-lab.io/archilab/prometheus-custom:${env.BUILD_ID}"
-        docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins-user') {
+        docker.withRegistry('https://docker.nexus.archi-lab.io//', 'archilab-nexus-jenkins') {
             sh "docker push docker.nexus.archi-lab.io/archilab/prometheus-custom"
             sh "docker push docker.nexus.archi-lab.io/archilab/prometheus-custom:${env.BUILD_ID}"
         }
